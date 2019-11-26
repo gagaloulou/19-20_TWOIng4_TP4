@@ -3,11 +3,12 @@ var router = express.Router();
 var _ = require('lodash');
 const axios = require('axios').default;
 
-let movies = [{
+/*let movies = [{
     title: "blade_runner",
     id : "0"
-}]
+}]*/
 
+var tab_films[];      //mon tableau conteneur de films
 
 /* GET movies listing. */
 router.get('/', (req, res) => {
@@ -36,13 +37,22 @@ router.put('/', (req, res) => {
     // Create new unique id
     const id = _.uniqueId();
     // Insert it in array (normaly with connect the data with the database)
-    movies.push({ title, id });
-    // Return message
-    res.json({
-      message: `Movie added ${id}`,
-      title: { title, id }
+    //movies.push({ title, id });
+    axios({
+        method: 'get',
+        url: 'http://www.omdbapi.com/?t=${name}&apikey=4c950265',
+        responseType: 'json'
+    })
+    .then(function(response){
+        const data=response.data;
+        tab_films.push({data, id});
+
+        res.status(200).json({
+            message: 'Film ajouté ${id}',
+            movie: {data, id}
+        });
     });
-  });
+    });
 
 
   /* DELETE user. */
